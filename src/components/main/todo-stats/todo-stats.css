@@ -1,0 +1,36 @@
+.card {
+    margin: 16px 24px;
+    padding: 16px 16px;
+    font-size: 1.5rem;
+    font-weight: 300;
+    color: #c7d5e8;
+    background: #031956;
+    border-radius: 20px;
+    box-shadow: 0 10px 8px -4px rgb(0 0 0 / 0.2);
+}
+
+.card__header {
+    margin-bottom: 8px;
+    font-size: 1.2rem;
+    color: #384d84
+}
+
+.card__content {
+    margin-bottom: 16px;
+    width: 100%;
+    font-size: 1.6rem;
+    font-weight: 400;
+    color: #ffffff;
+}
+
+.card__progress-bar {
+    /* padding: 3px; */
+    background-color: #384d84;
+    border-radius: 13px;
+}
+
+.card__progress-bar--bar {
+    height: 5px;
+    background-color: #eb05fd;
+    border-radius: 10px;
+}

@@ -1,0 +1,15 @@
+.add-button {
+    
+    position:fixed;
+	bottom: 26px;
+	right: 26px;
+	height: 60px;
+	width: 60px;
+	text-align: center;
+	appearance:none;
+    -webkit-appearance:none;
+	background-color:#eb05fd;
+    border: 1px solid #eb05fd;
+	border-radius:50px;
+	box-shadow: 0 10px 8px -4px rgb(0 0 0 / 0.2);
+}
