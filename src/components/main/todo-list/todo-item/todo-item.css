@@ -1,8 +1,14 @@
 .todo-list__item {
     display: flex;
     justify-content: space-between;
-    padding: 20px 16px;
     margin: 8px 26px;
+}
+
+.todo-list__container {
+    display: flex;
+    justify-content: space-between;
+    padding: 20px 16px;
+    width: 100%;
     font-size: 1.5rem;
     font-weight: 300;
     color: #c7d5e8;
@@ -10,7 +16,7 @@
     border-radius: 20px;
 }
 
-.todo-list__item--text {
+.todo-text {
     text-align: left;
 }
 
@@ -55,4 +61,24 @@
 
 .checkbox--round input[type="checkbox"]:checked + label::after {
     opacity: 1;
+}
+
+.todo-text--container {
+    width: 100%;
+    margin-left: 30px;
+    text-align: left;
+}
+
+.todo-list__item--trash-container {
+    /* position: relative; */
+}
+
+.delete-button {
+    /* position: absolute; */
+    /* top: -30px; */
+    appearance:none;
+    -webkit-appearance:none;
+    background-color: transparent;
+    border-color: transparent;
+    cursor: pointer;
 }
