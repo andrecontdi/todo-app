@@ -12,7 +12,7 @@
 .card__header {
     margin-bottom: 8px;
     font-size: 1.2rem;
-    color: #384d84
+    color: #86a2eb
 }
 
 .card__content {
@@ -24,7 +24,6 @@
 }
 
 .card__progress-bar {
-    /* padding: 3px; */
     background-color: #384d84;
     border-radius: 13px;
 }
