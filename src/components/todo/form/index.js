@@ -7,6 +7,10 @@ function TodoForm({ handleAddTodo, handleModalClosing }) {
   const [inputValueError, setInputValueError] = React.useState();
 
   const handleNewTodoInput = (event) => {
+    if (event.target.value) {
+      setInputValueError(false);
+    }
+
     setInputValue(event.target.value);
   };
 
@@ -35,13 +39,16 @@ function TodoForm({ handleAddTodo, handleModalClosing }) {
           aria-placeholder="What do you want to do?"
           value={inputValue}
           onChange={(event) => handleNewTodoInput(event)}
+          className="todo-text-input"
         ></textarea>
         {!!inputValueError && (
           <div className="error--container">
             <p>Ther's no TODO to add.</p>
           </div>
         )}
-        <button type="submit">Save</button>
+        <button type="submit" className="todo-text-button">
+          Save
+        </button>
       </form>
     </React.Fragment>
   );
