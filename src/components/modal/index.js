@@ -8,4 +8,4 @@ function Modal({ openModal, children }) {
   );
 }
 
-export { Modal }
+export { Modal };

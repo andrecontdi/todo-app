@@ -4,7 +4,7 @@ import { TodoStats } from './stats';
 import { TodoList } from './list';
 import { TodoItem } from './item';
 import { AddTodo } from './add';
-import { Modal } from "../modal";
+import { Modal } from '../modal';
 import { TodoForm } from './form';
 
 class Todo extends React.Component {
@@ -26,6 +26,9 @@ class Todo extends React.Component {
       },
       openModal: false,
     };
+
+    this.handleAddTodo = this.handleAddTodo.bind(this);
+    this.handleModalClosing = this.handleModalClosing.bind(this);
   }
 
   handleModalOpening() {
@@ -72,19 +75,23 @@ class Todo extends React.Component {
     });
   }
 
-  /*   handleAddTodo(text) {
+  handleAddTodo(text) {
     const todosCopy = [...this.state.todos];
-    todosCopy.push({ 
+    todosCopy.push({
       text,
-      id: todosCopy[todosCopy.length - 1].id + 1, 
-      completed: false 
-    })
-
+      id: todosCopy[todosCopy.length - 1].id + 1,
+      completed: false,
+    });
     this.setState({ todos: todosCopy }, () => {
       this.countingTodos();
       this.handleProgressBarUpdate();
+      this.handleModalClosing();
     });
-  } */
+  }
+
+  handleModalClosing() {
+    this.setState({ openModal: false });
+  }
 
   render() {
     return (
@@ -105,7 +112,7 @@ class Todo extends React.Component {
           ))}
         </TodoList>
         <Modal openModal={this.state.openModal}>
-          <TodoForm />
+          <TodoForm handleAddTodo={this.handleAddTodo} handleModalClosing={this.handleModalClosing} />
         </Modal>
         <AddTodo handleModalOpening={() => this.handleModalOpening()} />
       </main>
