@@ -64,7 +64,7 @@ class Todo extends React.Component {
     const todosCopy = [...this.state.todos];
 
     todosCopy[todoIndex].completed = !todosCopy[todoIndex].completed;
-    this.setState({ todos: todosCopy }, () => {
+    this.setState({ todos: todosCopy, searchedTodos: todosCopy }, () => {
       this.countingTodos();
       this.handleProgressBarUpdate();
     });
@@ -75,7 +75,7 @@ class Todo extends React.Component {
     const todosCopy = [...this.state.todos];
 
     todosCopy.splice(todoIndex, 1);
-    this.setState({ todos: todosCopy }, () => {
+    this.setState({ todos: todosCopy, searchedTodos: todosCopy }, () => {
       this.countingTodos();
       this.handleProgressBarUpdate();
     });
@@ -88,7 +88,7 @@ class Todo extends React.Component {
       id: todosCopy[todosCopy.length - 1].id + 1,
       completed: false,
     });
-    this.setState({ todos: todosCopy }, () => {
+    this.setState({ todos: todosCopy, searchedTodos: todosCopy }, () => {
       this.countingTodos();
       this.handleProgressBarUpdate();
       this.handleModalClosing();

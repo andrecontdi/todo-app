@@ -9,12 +9,13 @@ function TodoList({ children, handleTodoSearch }) {
 
   return (
     <section className="list">
-      <h3 className="section-header">Today's tasks</h3>
+      <h3 className="section-header">Todos</h3>
       <input
         type="text"
         placeholder="Find your TODO"
         aria-placeholder="Find your TODO"
         onChange={(event) => handleSearchInput(event)}
+        className="search-input"
       ></input>
       <ul className="todo-list">{children}</ul>
     </section>
