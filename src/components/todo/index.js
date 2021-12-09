@@ -25,14 +25,14 @@ class Todo extends React.Component {
         progress: 0,
       },
       openModal: false,
+      searchedTodos: [],
     };
 
+    this.state.searchedTodos = this.state.todos;
+
+    this.handleTodoSearch = this.handleTodoSearch.bind(this);
     this.handleAddTodo = this.handleAddTodo.bind(this);
     this.handleModalClosing = this.handleModalClosing.bind(this);
-  }
-
-  handleModalOpening() {
-    this.setState({ openModal: !this.state.openModal });
   }
 
   countingTodos() {
@@ -51,6 +51,12 @@ class Todo extends React.Component {
     const progress = (completedTodos * progressBarWitdh) / totalTodos;
 
     this.setState({ progressBar: { progressBar, progressBarWitdh, progress } });
+  }
+
+  handleTodoSearch(text) {
+    this.setState({
+      searchedTodos: [...this.state.todos.filter((todo) => todo.text.toLowerCase().includes(text.toLowerCase()))],
+    });
   }
 
   handleCompleteTodo(todoId) {
@@ -89,6 +95,10 @@ class Todo extends React.Component {
     });
   }
 
+  handleModalOpening() {
+    this.setState({ openModal: !this.state.openModal });
+  }
+
   handleModalClosing() {
     this.setState({ openModal: false });
   }
@@ -101,8 +111,8 @@ class Todo extends React.Component {
           completedTodos={this.state.completedTodos}
           progressBar={this.state.progressBar}
         />
-        <TodoList>
-          {this.state.todos.map((todo) => (
+        <TodoList handleTodoSearch={this.handleTodoSearch}>
+          {this.state.searchedTodos.map((todo) => (
             <TodoItem
               key={todo.id}
               todo={todo}

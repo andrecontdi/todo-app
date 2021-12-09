@@ -7,8 +7,8 @@
 }
 
 .close {
-  appearance:none;
-  -webkit-appearance:none;
+  appearance: none;
+  -webkit-appearance: none;
   background-color: transparent;
   border-color: transparent;
   cursor: pointer;

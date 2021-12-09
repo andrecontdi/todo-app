@@ -3,7 +3,7 @@ import './todo-stats.css';
 
 function TodoStats({ totalTodos, completedTodos, progressBar }) {
   return (
-    <section className="stats-container">
+    <section className="stats">
       <h3 className="section-header">COMPLETED</h3>
       <div className="card">
         <h3 className="card__header">{totalTodos} todos</h3>

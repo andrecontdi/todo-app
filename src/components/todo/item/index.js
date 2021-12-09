@@ -13,10 +13,10 @@ function TodoItem({ todo, handleCompleteTodo, handleDeleteTodo }) {
         <div className="todo-text--container">
           <p className="todo-text">{todo.text}</p>
         </div>
+        <button className="delete-button">
+          <FiTrash style={{ color: '#86a2eb', fontSize: '20px' }} onClick={handleDeleteTodo} />
+        </button>
       </div>
-      <button className="delete-button">
-        <FiTrash style={{ color: '#86a2eb', fontSize: '20px' }} onClick={handleDeleteTodo} />
-      </button>
     </li>
   );
 }
