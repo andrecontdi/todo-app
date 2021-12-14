@@ -2,7 +2,7 @@ import React from 'react';
 import { FiXCircle } from 'react-icons/fi';
 import './todo-form.css';
 
-function TodoForm({ handleAddTodo, handleModalClosing }) {
+function TodoForm({ handleAddTodo, handleShowModal }) {
   const [inputValue, setInputValue] = React.useState();
   const [inputValueError, setInputValueError] = React.useState();
 
@@ -29,7 +29,7 @@ function TodoForm({ handleAddTodo, handleModalClosing }) {
   return (
     <React.Fragment>
       <div className="close--container">
-        <button className="close" onClick={() => handleModalClosing()}>
+        <button className="close" onClick={() => handleShowModal()}>
           <FiXCircle style={{ color: '#86a2eb', fontSize: '30px' }} />
         </button>
       </div>

@@ -7,138 +7,124 @@ import { AddTodo } from './add';
 import { Modal } from '../modal';
 import { TodoForm } from './form';
 
-class Todo extends React.Component {
-  constructor(props) {
-    super(props);
-
-    this.state = {
-      todos: [],
-      totalTodos: 0,
-      completedTodos: 0,
-      progressBar: {
-        progressBar: '',
-        progressBarWitdh: 320,
-        progress: 0,
-      },
-      openModal: false,
-      searchedTodos: [],
-    };
-
-    const localStorageTodos = localStorage.getItem('todos');
-
-    if (localStorageTodos) {
-      this.state.todos = JSON.parse(localStorageTodos);
-    }
-
-    this.state.searchedTodos = this.state.todos;
-
-    this.handleTodoSearch = this.handleTodoSearch.bind(this);
-    this.handleAddTodo = this.handleAddTodo.bind(this);
-    this.handleModalClosing = this.handleModalClosing.bind(this);
+function useLocalStorage(itemName, initialValue) {
+  const localStorageItem = localStorage.getItem(itemName);
+  let parsedItem;
+  
+  if (!localStorageItem) {
+    localStorage.setItem(itemName, JSON.stringify(initialValue));
+    parsedItem = initialValue;
+  } else {
+    parsedItem = JSON.parse(localStorageItem);
   }
 
-  countingTodos() {
-    let totalTodos = this.state.todos.length;
-    let completedTodos = this.state.todos.filter((todo) => !!todo.completed).length;
+  const [item, setItem] = React.useState(parsedItem);
 
-    this.setState({ totalTodos, completedTodos });
+  const saveItem = (newItem) => {
+    const stringifiedItem = JSON.stringify(newItem);
+    localStorage.setItem(itemName, stringifiedItem);
+    setItem(newItem);
+  };
 
-    return { totalTodos, completedTodos };
+  return [
+    item,
+    saveItem,
+  ];
+}
+
+
+function Todo() {
+  const [todos, setTodos] = useLocalStorage('todos', []);
+  const [searchValue, setSearchValue] = React.useState('');
+  const [progress, setProgress] = React.useState(0);
+  const [showModal, setShowModal] = React.useState(false);
+
+  let searchedTodos = []
+  let totalTodos = todos.length;
+  let completedTodos = todos.filter((todo) => !!todo.completed).length;
+
+  if (!searchValue) {
+    searchedTodos = todos
+  } else {
+    searchedTodos = todos.filter((todo) => todo.text.toLowerCase().includes(searchValue.toLowerCase()));
   }
 
-  handleProgressBarUpdate() {
-    const { totalTodos, completedTodos } = this.countingTodos();
+  const handleProgressBarUpdate = React.useCallback(() => {
     const progressBar = document.querySelector('.card__progress-bar');
     const progressBarWitdh = progressBar.offsetWidth;
     const progress = (completedTodos * progressBarWitdh) / totalTodos;
 
-    this.setState({ progressBar: { progressBar, progressBarWitdh, progress } });
-  }
+    setProgress(progress);
+  }, [totalTodos, completedTodos]);
 
-  handleTodoSearch(text) {
-    this.setState({
-      searchedTodos: [...this.state.todos.filter((todo) => todo.text.toLowerCase().includes(text.toLowerCase()))],
-    });
-  }
 
-  handleCompleteTodo(todoId) {
-    const todoIndex = this.state.todos.findIndex((todo) => todo.id === todoId);
-    const todosCopy = [...this.state.todos];
+  React.useEffect(() => {
+    window.addEventListener('resize', handleProgressBarUpdate);
+  }, [handleProgressBarUpdate]);
+
+  // As callback for useState
+  React.useEffect(() => handleProgressBarUpdate(), [handleProgressBarUpdate])
+
+  const saveTodos = (todos) => {
+    setTodos(todos);
+    handleProgressBarUpdate();
+  };
+
+  const handleCompleteTodo = (todoId) => {
+    const todoIndex = todos.findIndex((todo) => todo.id === todoId);
+    const todosCopy = [...todos];
 
     todosCopy[todoIndex].completed = !todosCopy[todoIndex].completed;
-    this.setState({ todos: todosCopy, searchedTodos: todosCopy }, () => {
-      this.countingTodos();
-      this.handleProgressBarUpdate();
-    });
-  }
 
-  handleDeleteTodo(todoId) {
-    const todoIndex = this.state.todos.findIndex((todo) => todo.id === todoId);
-    const todosCopy = [...this.state.todos];
+    saveTodos(todosCopy);
+  };
+
+  const handleDeleteTodo = (todoId) => {
+    const todoIndex = todos.findIndex((todo) => todo.id === todoId);
+    const todosCopy = [...todos];
 
     todosCopy.splice(todoIndex, 1);
-    this.setState({ todos: todosCopy, searchedTodos: todosCopy }, () => {
-      this.countingTodos();
-      this.handleProgressBarUpdate();
-    });
-  }
 
-  handleAddTodo(text) {
-    const todosCopy = [...this.state.todos];
+    saveTodos(todosCopy);
+  };
+
+  const handleAddTodo = (text) => {
+    const todosCopy = [...todos];
+
     todosCopy.push({
       text,
-      id: todosCopy[todosCopy.length - 1].id + 1,
+      id: Math.floor(Math.random() * 1000),
       completed: false,
     });
-    this.setState({ todos: todosCopy, searchedTodos: todosCopy }, () => {
-      this.countingTodos();
-      this.handleProgressBarUpdate();
-      this.handleModalClosing();
-    });
-  }
 
-  handleModalOpening() {
-    this.setState({ openModal: !this.state.openModal });
-  }
+    saveTodos(todosCopy);
 
-  handleModalClosing() {
-    this.setState({ openModal: false });
-  }
+    handleShowModal();
+  };
 
-  render() {
-    return (
-      <main>
-        <TodoStats
-          totalTodos={this.state.totalTodos}
-          completedTodos={this.state.completedTodos}
-          progressBar={this.state.progressBar}
-        />
-        <TodoList handleTodoSearch={this.handleTodoSearch}>
-          {this.state.searchedTodos.map((todo) => (
-            <TodoItem
-              key={todo.id}
-              todo={todo}
-              handleCompleteTodo={() => this.handleCompleteTodo(todo.id)}
-              handleDeleteTodo={() => this.handleDeleteTodo(todo.id)}
-            />
-          ))}
-        </TodoList>
-        <Modal openModal={this.state.openModal}>
-          <TodoForm handleAddTodo={this.handleAddTodo} handleModalClosing={this.handleModalClosing} />
-        </Modal>
-        <AddTodo handleModalOpening={() => this.handleModalOpening()} />
-      </main>
-    );
-  }
+  const handleShowModal = () => {
+    setShowModal(!showModal);
+  };
 
-  componentDidMount() {
-    this.countingTodos();
-    this.handleProgressBarUpdate();
-
-    window.addEventListener('resize', () => this.handleProgressBarUpdate());
-
-    this.handleProgressBarUpdate = this.handleProgressBarUpdate.bind(this);
-  }
+  return (
+    <main>
+      <TodoStats totalTodos={totalTodos} completedTodos={completedTodos} progress={progress} />
+      <TodoList setSearchValue={setSearchValue}>
+        {searchedTodos.map((todo) => (
+          <TodoItem
+            key={todo.id}
+            todo={todo}
+            handleCompleteTodo={() => handleCompleteTodo(todo.id)}
+            handleDeleteTodo={() => handleDeleteTodo(todo.id)}
+          />
+        ))}
+      </TodoList>
+      <Modal openModal={showModal}>
+        <TodoForm handleAddTodo={handleAddTodo} handleShowModal={handleShowModal} />
+      </Modal>
+      <AddTodo handleShowModal={() => handleShowModal()} />
+    </main>
+  );
 }
 
 export { Todo };

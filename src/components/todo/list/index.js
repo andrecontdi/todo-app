@@ -1,10 +1,9 @@
 import React from 'react';
 import './todo-list.css';
 
-function TodoList({ children, handleTodoSearch }) {
+function TodoList({ children, setSearchValue }) {
   const handleSearchInput = (event) => {
-    console.log(event.target.value);
-    handleTodoSearch(event.target.value);
+    setSearchValue(event.target.value);
   };
 
   return (
