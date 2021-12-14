@@ -12,11 +12,7 @@ class Todo extends React.Component {
     super(props);
 
     this.state = {
-      todos: [
-        { id: 1, text: 'Daily meeting with team', completed: false },
-        { id: 2, text: 'Pay for rent', completed: true },
-        { id: 3, text: 'Check emails', completed: false },
-      ],
+      todos: [],
       totalTodos: 0,
       completedTodos: 0,
       progressBar: {
@@ -27,6 +23,12 @@ class Todo extends React.Component {
       openModal: false,
       searchedTodos: [],
     };
+
+    const localStorageTodos = localStorage.getItem('todos');
+
+    if (localStorageTodos) {
+      this.state.todos = JSON.parse(localStorageTodos);
+    }
 
     this.state.searchedTodos = this.state.todos;
 
