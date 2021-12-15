@@ -6,19 +6,28 @@ import { TodoItem } from './item';
 import { AddTodo } from './add';
 import { Modal } from '../modal';
 import { TodoForm } from './form';
+import { Loader } from '../loader';
 
 function useLocalStorage(itemName, initialValue) {
-  const localStorageItem = localStorage.getItem(itemName);
-  let parsedItem;
-  
-  if (!localStorageItem) {
-    localStorage.setItem(itemName, JSON.stringify(initialValue));
-    parsedItem = initialValue;
-  } else {
-    parsedItem = JSON.parse(localStorageItem);
-  }
+  const [item, setItem] = React.useState(initialValue);
+  const [showLoader, setShowLoader] = React.useState(true);
 
-  const [item, setItem] = React.useState(parsedItem);
+  React.useEffect(() => {
+    setTimeout(() => {
+      const localStorageItem = localStorage.getItem(itemName);
+      let parsedItem;
+
+      if (!localStorageItem) {
+        localStorage.setItem(itemName, JSON.stringify(initialValue));
+        parsedItem = initialValue;
+      } else {
+        parsedItem = JSON.parse(localStorageItem);
+      }
+
+      setItem(parsedItem);
+      setShowLoader(false);
+    }, 2500);
+  });
 
   const saveItem = (newItem) => {
     const stringifiedItem = JSON.stringify(newItem);
@@ -26,25 +35,21 @@ function useLocalStorage(itemName, initialValue) {
     setItem(newItem);
   };
 
-  return [
-    item,
-    saveItem,
-  ];
+  return [item, saveItem, showLoader];
 }
 
-
 function Todo() {
-  const [todos, setTodos] = useLocalStorage('todos', []);
+  const [todos, setTodos, showLoader] = useLocalStorage('todos', []);
   const [searchValue, setSearchValue] = React.useState('');
   const [progress, setProgress] = React.useState(0);
   const [showModal, setShowModal] = React.useState(false);
 
-  let searchedTodos = []
+  let searchedTodos = [];
   let totalTodos = todos.length;
   let completedTodos = todos.filter((todo) => !!todo.completed).length;
 
   if (!searchValue) {
-    searchedTodos = todos
+    searchedTodos = todos;
   } else {
     searchedTodos = todos.filter((todo) => todo.text.toLowerCase().includes(searchValue.toLowerCase()));
   }
@@ -54,16 +59,17 @@ function Todo() {
     const progressBarWitdh = progressBar.offsetWidth;
     const progress = (completedTodos * progressBarWitdh) / totalTodos;
 
-    setProgress(progress);
+    if (progress) {
+      setProgress(progress);
+    }
   }, [totalTodos, completedTodos]);
-
 
   React.useEffect(() => {
     window.addEventListener('resize', handleProgressBarUpdate);
   }, [handleProgressBarUpdate]);
 
   // As callback for useState
-  React.useEffect(() => handleProgressBarUpdate(), [handleProgressBarUpdate])
+  React.useEffect(() => handleProgressBarUpdate(), [handleProgressBarUpdate]);
 
   const saveTodos = (todos) => {
     setTodos(todos);
@@ -108,6 +114,7 @@ function Todo() {
 
   return (
     <main>
+      <Loader showLoader={showLoader} />
       <TodoStats totalTodos={totalTodos} completedTodos={completedTodos} progress={progress} />
       <TodoList setSearchValue={setSearchValue}>
         {searchedTodos.map((todo) => (
