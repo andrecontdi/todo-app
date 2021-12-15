@@ -25,7 +25,7 @@ form {
 }
 
 .todo-text-input {
-  margin: 8px 26px;
+  margin: 8px 24px;
   width: 86%;
   appearance: none;
   -webkit-appearance: none;
@@ -39,13 +39,13 @@ form {
 }
 
 .error--container {
-  margin: 8px 26px;
+  margin: 8px 24px;
   width: 86%;
   color: #eb05fd;
 }
 
 .todo-text-button {
-  margin: 8px 26px;
+  margin: 8px 24px;
   width: 86%;
   appearance: none;
   -webkit-appearance: none;

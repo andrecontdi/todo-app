@@ -7,7 +7,7 @@ function TodoList({ children, setSearchValue }) {
   };
 
   return (
-    <section className="list">
+    <section>
       <h3 className="section-header">Todos</h3>
       <input
         type="text"
