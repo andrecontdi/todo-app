@@ -3,8 +3,8 @@ import { FiXCircle } from 'react-icons/fi';
 import './todo-form.css';
 
 function TodoForm({ handleAddTodo, handleShowModal }) {
-  const [inputValue, setInputValue] = React.useState();
-  const [inputValueError, setInputValueError] = React.useState();
+  const [inputValue, setInputValue] = React.useState('');
+  const [inputValueError, setInputValueError] = React.useState(false);
 
   const handleNewTodoInput = (event) => {
     if (event.target.value) {
@@ -24,6 +24,7 @@ function TodoForm({ handleAddTodo, handleShowModal }) {
 
     setInputValueError(false);
     handleAddTodo(inputValue);
+    setInputValue('');
   };
 
   return (
