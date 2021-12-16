@@ -4,7 +4,7 @@ import './loader.css';
 function Loader({ showLoader }) {
   return ReactDOM.createPortal(
     <div className={`modal--container ${!showLoader ? 'hidden' : 'show'}`}>
-      <div class="lds-default">
+      <div className="lds-default">
         <div></div>
         <div></div>
         <div></div>

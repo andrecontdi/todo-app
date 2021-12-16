@@ -1,9 +1,9 @@
 import React from 'react';
 import './todo-list.css';
 
-function TodoList({ children, setSearchValue }) {
+function TodoList({ children, handleSearchTodo }) {
   const handleSearchInput = (event) => {
-    setSearchValue(event.target.value);
+    handleSearchTodo(event.target.value);
   };
 
   return (
@@ -14,7 +14,7 @@ function TodoList({ children, setSearchValue }) {
         placeholder="Find your TODO"
         aria-placeholder="Find your TODO"
         onChange={(event) => handleSearchInput(event)}
-        className="search-input"
+        className="todo-app-input"
       ></input>
       <ul className="todo-list">{children}</ul>
     </section>

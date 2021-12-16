@@ -1,48 +1,76 @@
 import React from 'react';
+import { TodoUI } from './todo';
 
-import { TodoStats } from './stats';
-import { TodoList } from './list';
-import { TodoItem } from './item';
-import { AddTodo } from './add';
-import { Modal } from '../modal';
-import { TodoForm } from './form';
-import { Loader } from '../loader';
+const LOCALSTORAGE_ITEM = 'todos';
 
-function useLocalStorage(itemName, initialValue) {
-  const [item, setItem] = React.useState(initialValue);
-  const [showLoader, setShowLoader] = React.useState(true);
+const initialState = {
+  todos: [],
+  searchValue: '',
+  progress: 0,
+  showModal: false,
+  showLoader: true,
+};
+
+const actionTypes = {
+  SUCCESS: 'SUCCESS',
+  ERROR: 'ERROR',
+  SEARCH: 'SEARCH',
+  UPDATE: 'UPDATE',
+  ADD: 'ADD',
+  PROGRESS: 'PROGRESS',
+  MODAL: 'MODAL',
+};
+
+const reducerObject = (state, payload) => ({
+  [actionTypes.SUCCESS]: {
+    ...state,
+    todos: payload,
+    showLoader: false,
+  },
+  [actionTypes.SEARCH]: {
+    ...state,
+    searchValue: payload,
+  },
+  [actionTypes.UPDATE]: {
+    ...state,
+    todos: payload,
+  },
+  [actionTypes.add]: {
+    ...state,
+    todos: payload,
+    showModal: false,
+  },
+  [actionTypes.PROGRESS]: {
+    ...state,
+    progress: payload,
+  },
+  [actionTypes.MODAL]: {
+    ...state,
+    showModal: !state.showModal,
+  },
+});
+
+const reducer = (state, action) => reducerObject(state, action.payload)[action.type] || state;
+
+function Todo() {
+  const [state, dispatch] = React.useReducer(reducer, initialState);
+  const { todos, searchValue, progress, showModal, showLoader } = state;
 
   React.useEffect(() => {
     setTimeout(() => {
-      const localStorageItem = localStorage.getItem(itemName);
+      const localStorageItem = localStorage.getItem(LOCALSTORAGE_ITEM);
       let parsedItem;
 
       if (!localStorageItem) {
-        localStorage.setItem(itemName, JSON.stringify(initialValue));
-        parsedItem = initialValue;
+        localStorage.setItem(LOCALSTORAGE_ITEM, JSON.stringify([]));
+        parsedItem = [];
       } else {
         parsedItem = JSON.parse(localStorageItem);
       }
 
-      setItem(parsedItem);
-      setShowLoader(false);
+      dispatch({ type: actionTypes.SUCCESS, payload: parsedItem });
     }, 2500);
-  });
-
-  const saveItem = (newItem) => {
-    const stringifiedItem = JSON.stringify(newItem);
-    localStorage.setItem(itemName, stringifiedItem);
-    setItem(newItem);
-  };
-
-  return [item, saveItem, showLoader];
-}
-
-function Todo() {
-  const [todos, setTodos, showLoader] = useLocalStorage('todos', []);
-  const [searchValue, setSearchValue] = React.useState('');
-  const [progress, setProgress] = React.useState(0);
-  const [showModal, setShowModal] = React.useState(false);
+  }, []);
 
   let searchedTodos = [];
   let totalTodos = todos.length;
@@ -56,12 +84,11 @@ function Todo() {
 
   const handleProgressBarUpdate = React.useCallback(() => {
     const progressBar = document.querySelector('.card__progress-bar');
-    const progressBarWitdh = progressBar.offsetWidth;
-    const progress = (completedTodos * progressBarWitdh) / totalTodos;
+    const progressBarWitdh = progressBar.offsetWidth || 0;
+    const progress = (completedTodos * progressBarWitdh) / totalTodos || 0;
 
-    if (progress) {
-      setProgress(progress);
-    }
+    dispatch({ type: actionTypes.PROGRESS, payload: progress });
+    // setProgress(progress);
   }, [totalTodos, completedTodos]);
 
   React.useEffect(() => {
@@ -69,10 +96,12 @@ function Todo() {
   }, [handleProgressBarUpdate]);
 
   // As callback for useState
-  React.useEffect(() => handleProgressBarUpdate(), [handleProgressBarUpdate]);
+  React.useEffect(() => handleProgressBarUpdate(), [totalTodos, completedTodos, handleProgressBarUpdate]);
 
   const saveTodos = (todos) => {
-    setTodos(todos);
+    const stringifiedItem = JSON.stringify(todos);
+    localStorage.setItem(LOCALSTORAGE_ITEM, stringifiedItem);
+    dispatch({ type: actionTypes.UPDATE, payload: todos });
     handleProgressBarUpdate();
   };
 
@@ -85,6 +114,10 @@ function Todo() {
     saveTodos(todosCopy);
   };
 
+  const handleSearchTodo = (todo) => {
+    dispatch({ type: actionTypes.SEARCH, payload: todo });
+  };
+
   const handleDeleteTodo = (todoId) => {
     const todoIndex = todos.findIndex((todo) => todo.id === todoId);
     const todosCopy = [...todos];
@@ -92,6 +125,10 @@ function Todo() {
     todosCopy.splice(todoIndex, 1);
 
     saveTodos(todosCopy);
+  };
+
+  const handleShowModal = () => {
+    dispatch({ type: actionTypes.MODAL });
   };
 
   const handleAddTodo = (text) => {
@@ -103,34 +140,23 @@ function Todo() {
       completed: false,
     });
 
-    saveTodos(todosCopy);
-
-    handleShowModal();
-  };
-
-  const handleShowModal = () => {
-    setShowModal(!showModal);
+    dispatch({ type: actionTypes.add, payload: todosCopy });
   };
 
   return (
-    <main>
-      <Loader showLoader={showLoader} />
-      <TodoStats totalTodos={totalTodos} completedTodos={completedTodos} progress={progress} />
-      <TodoList setSearchValue={setSearchValue}>
-        {searchedTodos.map((todo) => (
-          <TodoItem
-            key={todo.id}
-            todo={todo}
-            handleCompleteTodo={() => handleCompleteTodo(todo.id)}
-            handleDeleteTodo={() => handleDeleteTodo(todo.id)}
-          />
-        ))}
-      </TodoList>
-      <Modal openModal={showModal}>
-        <TodoForm handleAddTodo={handleAddTodo} handleShowModal={handleShowModal} />
-      </Modal>
-      <AddTodo handleShowModal={() => handleShowModal()} />
-    </main>
+    <TodoUI
+      totalTodos={totalTodos}
+      completedTodos={completedTodos}
+      searchedTodos={searchedTodos}
+      progress={progress}
+      showLoader={showLoader}
+      showModal={showModal}
+      handleSearchTodo={handleSearchTodo}
+      handleCompleteTodo={handleCompleteTodo}
+      handleDeleteTodo={handleDeleteTodo}
+      handleAddTodo={handleAddTodo}
+      handleShowModal={handleShowModal}
+    />
   );
 }
 

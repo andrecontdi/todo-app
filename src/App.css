@@ -1,5 +1,5 @@
 .section-header {
-  margin: 24px 24px;
+  margin: 24px 24px 16px 24px;
   font-size: 1.2rem;
   letter-spacing: 2px;
   text-transform: uppercase;
@@ -26,4 +26,17 @@
   height: 100vh;
   overflow: auto;
   background-color: #031956;
+}
+
+.todo-app-input {
+  width: 85%;
+  margin: 8px 24px;
+  padding: 8px 24px;
+  font-size: 1.5rem;
+  font-weight: 300;
+  color: #031956;
+  background: #c7d5e8;
+  border: 1px solid #c7d5e8;
+  border-radius: 20px;
+  box-shadow: 0 10px 8px -4px rgb(0 0 0 / 0.2);
 }

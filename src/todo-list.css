@@ -1,0 +1,15 @@
+.todo-list {
+  list-style: none;
+}
+
+.search-input {
+  width: 85%;
+  margin: 8px 24px;
+  padding: 8px 24px;
+  font-size: 1.5rem;
+  font-weight: 300;
+  color: #031956;
+  background: #c7d5e8;
+  border: 1px solid #c7d5e8;
+  border-radius: 20px;
+}

@@ -40,7 +40,7 @@ function TodoForm({ handleAddTodo, handleShowModal }) {
           aria-placeholder="What do you want to do?"
           value={inputValue}
           onChange={(event) => handleNewTodoInput(event)}
-          className="todo-text-input"
+          className="todo-app-input"
         ></textarea>
         {!!inputValueError && (
           <div className="error--container">
